@@ -12,8 +12,8 @@ type ErrorResponse struct {
 
 // ResponseError Respond to the request with the supplied error code.
 func (e ErrorResponse) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(e.Code)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(e.Code)
 
 	body := map[string]string{
 		"error": e.Message,
