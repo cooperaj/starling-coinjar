@@ -13,7 +13,7 @@ import (
 
 type Config struct {
 	PersonalKey   string `envconfig:"PERSONAL_KEY"`
-	WebHookSecret string `envconfig:"WEB_HOOK_SECRET"`
+	WebHookSecret string `envconfig:"WEBHOOK_SECRET"`
 }
 
 func newRouter(cfg *Config) (router *mux.Router) {
