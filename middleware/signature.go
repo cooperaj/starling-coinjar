@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"bytes"
 	"crypto/sha512"
 	"encoding/base64"
 	"io/ioutil"
@@ -27,9 +28,13 @@ func (s *SignatureValidationMiddleware) Middleware(next http.Handler) http.Handl
 			return
 		}
 
+		// read and restore the request body since the ReadAll call drains the buffer
+		body, _ := ioutil.ReadAll(r.Body)
+		r.Body.Close()
+		r.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+
 		// encode our own version of the signature so we can check it against the
 		// provided one.
-		body, _ := ioutil.ReadAll(r.Body)
 		shaHash := sha512.New()
 		shaHash.Write([]byte(s.Secret + string(body)))
 
