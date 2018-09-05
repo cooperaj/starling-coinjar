@@ -1,4 +1,4 @@
-# Created by https://www.gitignore.io/api/go,macos
+# Created by https://www.gitignore.io/api/go,macos,visualstudiocode
 
 ### Go ###
 # Binaries for programs and plugins
@@ -14,8 +14,13 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+### Go Patch ###
+/vendor/
+/Godeps/
+
 ### macOS ###
-*.DS_Store
+# General
+.DS_Store
 .AppleDouble
 .LSOverride
 
@@ -40,3 +45,13 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+
+# End of https://www.gitignore.io/api/go,macos,visualstudiocode
