@@ -11,8 +11,12 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
+var (
+	transactionProcessor = TransactionProcessor{}
+)
+
 type Config struct {
-	PersonalKey   string `envconfig:"PERSONAL_KEY"`
+	PersonalToken string `envconfig:"PERSONAL_TOKEN"`
 	WebHookSecret string `envconfig:"WEBHOOK_SECRET"`
 }
 
@@ -28,7 +32,11 @@ func newRouter(cfg *Config) (router *mux.Router) {
 		Methods("GET")
 
 	router.Handle("/transaction",
-		handlers.LoggingHandler(os.Stdout, svm.Middleware(transactionHandler()))).
+		handlers.LoggingHandler(
+			os.Stdout,
+			svm.Middleware(
+				transactionHandler(
+					&transactionProcessor)))).
 		Methods("POST")
 
 	return
@@ -39,6 +47,8 @@ func main() {
 	if err := envconfig.Process("", &cfg); err != nil {
 		log.Fatal(err)
 	}
+
+	transactionProcessor.Start()
 
 	router := newRouter(&cfg)
 	if err := http.ListenAndServe(":5000", router); err != nil {

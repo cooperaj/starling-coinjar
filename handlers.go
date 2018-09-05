@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/cooperaj/starling-coinjar/util"
@@ -14,8 +16,18 @@ type healthCheckResponse struct {
 	Alive bool `json:"alive"`
 }
 
-func transactionHandler() http.Handler {
+func transactionHandler(tp *TransactionProcessor) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		payload, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			fmt.Println("Failure to retrieve JSON payload")
+		}
+
+		err = tp.ProcessPayload(payload)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
 		response := util.JsonResponse{
 			Body: transactionResponse{
 				Ok: false,
