@@ -16,7 +16,7 @@ type healthCheckResponse struct {
 	Alive bool `json:"alive"`
 }
 
-func transactionHandler(tp *TransactionProcessor) http.Handler {
+func transactionHandler(tp TransactionProcessor) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		payload, err := ioutil.ReadAll(r.Body)
 		if err != nil {

@@ -1,3 +1,5 @@
+//go:generate go-bindata -o resources.go docs/
+
 package main
 
 import (
@@ -12,7 +14,8 @@ import (
 )
 
 var (
-	transactionProcessor = TransactionProcessor{}
+	transactionProcessor TransactionProcessor
+	coinJar              CoinJar
 )
 
 type Config struct {
@@ -36,7 +39,7 @@ func newRouter(cfg *Config) (router *mux.Router) {
 			os.Stdout,
 			svm.Middleware(
 				transactionHandler(
-					&transactionProcessor)))).
+					transactionProcessor)))).
 		Methods("POST")
 
 	return
@@ -48,6 +51,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	coinJar = NewCoinJar("Coin Jar", cfg)
+
+	transactionProcessor = &StarlingTransactionProcessor{CoinJar: coinJar}
 	transactionProcessor.Start()
 
 	router := newRouter(&cfg)
