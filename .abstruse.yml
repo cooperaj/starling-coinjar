@@ -1,6 +1,8 @@
 image: go_builder
 matrix:
   - env: GO_VERSION=go1.9 PROJECT_PATH=github.com/cooperaj/starling-coinjar
+  - env: GO_VERSION=go1.10 PROJECT_PATH=github.com/cooperaj/starling-coinjar
+  - env: GO_VERSION=go1.11 PROJECT_PATH=github.com/cooperaj/starling-coinjar
 
 before_install:
   - gvm install $GO_VERSION -B
@@ -14,4 +16,4 @@ install:
   - cd $GOPATH/src/$PROJECT_PATH && go get ./...
 
 script:
-  - cd $GOPATH/src/$PROJECT_PATH && $GOPATH/bin/ginkgo ./...
+  - cd $GOPATH/src/$PROJECT_PATH && $GOPATH/bin/ginkgo -r
