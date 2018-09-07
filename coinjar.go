@@ -1,35 +1,105 @@
 package main
 
+import (
+	"context"
+	"encoding/base64"
+	"fmt"
+	"net/url"
+
+	"github.com/billglover/starling"
+	"github.com/google/uuid"
+	"golang.org/x/oauth2"
+)
+
+var (
+	client *starling.Client
+	ctx    context.Context
+)
+
 type CoinJar interface {
-	AddFunds(amount float64) error
+	AddFunds(amount int8) error
 }
 
 type StarlingCoinJar struct {
 	Name           string
+	Currency       string
 	SavingsGoalUID string
 }
 
-func NewCoinJar(name string) CoinJar {
-	savingsGoalUID, err := ensureStarlingSavingsGoal(name)
-	if err != nil {
-		panic("Unable to ensure a Starling Savings Goal exists")
-	}
+func NewCoinJar(name string, config Config) CoinJar {
+	var coinJar = StarlingCoinJar{Name: name}
+	coinJar.Currency = "GBP"
 
-	return &StarlingCoinJar{
-		Name:           name,
-		SavingsGoalUID: savingsGoalUID,
+	client = coinJar.starlingClient(config.PersonalToken)
+
+	savingsGoalUID, err := coinJar.ensureStarlingSavingsGoal(name)
+	if err != nil {
+		panic(fmt.Sprintf("Unable to ensure a Starling Savings Goal exists: %s", err.Error()))
 	}
+	coinJar.SavingsGoalUID = savingsGoalUID
+
+	return &coinJar
 }
 
-func (cj *StarlingCoinJar) AddFunds(amount float64) error {
+func (cj *StarlingCoinJar) AddFunds(amount int8) error {
+	var change = starling.Amount{
+		Currency:   cj.Currency,
+		MinorUnits: int64(amount),
+	}
+
+	_, _, err := client.TransferToSavingsGoal(ctx, cj.SavingsGoalUID, change)
+	if err != nil {
+		panic(fmt.Sprintf("Cannot add funds to the \"%s\" coin jar: %s", cj.Name, err))
+	}
 
 	return nil
 }
 
-func ensureStarlingSavingsGoal(name string) (savingsGoalUID string, err error) {
+func (cj *StarlingCoinJar) ensureStarlingSavingsGoal(name string) (savingsGoalUID string, err error) {
 	// get list of savings goals
-	// check ours is in it
-	// if not, make it
+	savingsGoals, _, err := client.SavingsGoals(ctx)
+	if err != nil {
+		return "", err
+	}
 
-	return
+	// check ours is in it
+	for _, savingsGoal := range savingsGoals {
+		if savingsGoal.Name == name {
+			return savingsGoal.UID, nil
+		}
+	}
+
+	// if not, make it
+	uuid := uuid.New()
+	err = cj.makeSavingsGoal(uuid, name)
+	if err != nil {
+		return "", err
+	}
+
+	return uuid.String(), nil
+}
+
+func (cj *StarlingCoinJar) makeSavingsGoal(uuid uuid.UUID, name string) error {
+	image, _ := Asset("docs/coins.jpg")
+	request := starling.SavingsGoalRequest{
+		Name:               name,
+		Currency:           cj.Currency,
+		Base64EncodedPhoto: base64.StdEncoding.EncodeToString(image),
+	}
+
+	_, err := client.CreateSavingsGoal(ctx, uuid.String(), request)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cj *StarlingCoinJar) starlingClient(accessToken string) *starling.Client {
+	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: accessToken})
+	ctx = context.Background()
+	tc := oauth2.NewClient(ctx, ts)
+
+	baseURL, _ := url.Parse(starling.ProdURL)
+	return starling.NewClientWithOptions(tc, starling.ClientOptions{BaseURL: baseURL})
 }
