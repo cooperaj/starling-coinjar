@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	coinjar "github.com/cooperaj/starling-coinjar"
+	"github.com/cooperaj/starling-coinjar"
 	"github.com/cooperaj/starling-coinjar/middleware"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
