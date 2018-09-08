@@ -1,4 +1,4 @@
-package main
+package coinjar
 
 import (
 	"encoding/json"

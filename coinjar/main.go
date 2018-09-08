@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/cooperaj/starling-coinjar"
 	"github.com/cooperaj/starling-coinjar/middleware"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -14,16 +15,11 @@ import (
 )
 
 var (
-	transactionProcessor TransactionProcessor
-	coinJar              CoinJar
+	transactionProcessor coinjar.TransactionProcessor
+	coinJar              coinjar.CoinJar
 )
 
-type Config struct {
-	PersonalToken string `envconfig:"PERSONAL_TOKEN"`
-	WebHookSecret string `envconfig:"WEBHOOK_SECRET"`
-}
-
-func newRouter(cfg *Config) (router *mux.Router) {
+func newRouter(cfg *coinjar.Config) (router *mux.Router) {
 	router = mux.NewRouter()
 
 	svm := middleware.SignatureValidationMiddleware{
@@ -31,14 +27,14 @@ func newRouter(cfg *Config) (router *mux.Router) {
 	}
 
 	router.Handle("/health",
-		handlers.LoggingHandler(os.Stdout, healthCheckHandler())).
+		handlers.LoggingHandler(os.Stdout, coinjar.HealthCheckHandler())).
 		Methods("GET")
 
 	router.Handle("/transaction",
 		handlers.LoggingHandler(
 			os.Stdout,
 			svm.Middleware(
-				transactionHandler(
+				coinjar.TransactionHandler(
 					transactionProcessor)))).
 		Methods("POST")
 
@@ -46,14 +42,14 @@ func newRouter(cfg *Config) (router *mux.Router) {
 }
 
 func main() {
-	var cfg Config
+	var cfg coinjar.Config
 	if err := envconfig.Process("", &cfg); err != nil {
 		log.Fatal(err)
 	}
 
-	coinJar = NewCoinJar("Coin Jar", cfg)
+	coinJar = coinjar.NewCoinJar("Coin Jar", cfg)
 
-	transactionProcessor = &StarlingTransactionProcessor{CoinJar: coinJar}
+	transactionProcessor = &coinjar.StarlingTransactionProcessor{CoinJar: coinJar}
 	transactionProcessor.Start()
 
 	router := newRouter(&cfg)

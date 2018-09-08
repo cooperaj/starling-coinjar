@@ -1,4 +1,4 @@
-package main
+package coinjar
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ type healthCheckResponse struct {
 	Alive bool `json:"alive"`
 }
 
-func transactionHandler(tp TransactionProcessor) http.Handler {
+func TransactionHandler(tp TransactionProcessor) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		payload, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -37,7 +37,7 @@ func transactionHandler(tp TransactionProcessor) http.Handler {
 	})
 }
 
-func healthCheckHandler() http.Handler {
+func HealthCheckHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		response := util.JsonResponse{
 			Body: healthCheckResponse{

@@ -1,4 +1,4 @@
-package main_test
+package coinjar_test
 
 import (
 	"testing"
