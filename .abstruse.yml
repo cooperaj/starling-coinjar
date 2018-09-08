@@ -6,7 +6,6 @@ matrix:
 
 cache:
   - /home/abstruse/.gvm/cache
-  - /home/abstruse/go
 
 before_install:
   - gvm install $GO_VERSION
