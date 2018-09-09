@@ -5,7 +5,7 @@ matrix:
   - env: GO_VERSION=1.11
 
 cache:
-  - /home/abstruse/.gvm/cache
+  - /home/abstruse/.gvm/versions
 
 before_install:
   - gvm install $GO_VERSION
