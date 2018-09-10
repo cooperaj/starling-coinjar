@@ -1,4 +1,4 @@
-package util_test
+package response_test
 
 import (
 	"io/ioutil"
@@ -8,7 +8,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	. "github.com/cooperaj/starling-coinjar/util"
+	. "github.com/cooperaj/starling-coinjar/pkg/response"
 )
 
 var _ = Describe("JsonResponse", func() {

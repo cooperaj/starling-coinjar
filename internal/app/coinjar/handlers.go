@@ -1,9 +1,11 @@
-package main
+package coinjar
 
 import (
+	"fmt"
+	"io/ioutil"
 	"net/http"
 
-	"github.com/cooperaj/starling-coinjar/util"
+	"github.com/cooperaj/starling-coinjar/pkg/response"
 )
 
 type transactionResponse struct {
@@ -14,9 +16,19 @@ type healthCheckResponse struct {
 	Alive bool `json:"alive"`
 }
 
-func transactionHandler() http.Handler {
+func TransactionHandler(tp TransactionProcessor) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		response := util.JsonResponse{
+		payload, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			fmt.Println("Failure to retrieve JSON payload")
+		}
+
+		err = tp.ProcessPayload(payload)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		response := response.JsonResponse{
 			Body: transactionResponse{
 				Ok: false,
 			},
@@ -25,9 +37,9 @@ func transactionHandler() http.Handler {
 	})
 }
 
-func healthCheckHandler() http.Handler {
+func HealthCheckHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		response := util.JsonResponse{
+		response := response.JsonResponse{
 			Body: healthCheckResponse{
 				Alive: true,
 			},

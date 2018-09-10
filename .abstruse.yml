@@ -1,16 +1,19 @@
-image: go_builder
+image: gvm_builder
 matrix:
-  - env: GO_VERSION=go1.9 PROJECT_PATH=github.com/cooperaj/starling-coinjar
+  - env: GO_VERSION=1.10
+  - env: GO_VERSION=1.11
+
+cache:
+  - /home/abstruse/.gvm/versions
 
 before_install:
-  - gvm install $GO_VERSION -B
-  - gvm use $GO_VERSION --default
-  - gvm linkthis $PROJECT_PATH
+  - gvm install $GO_VERSION
 
 install:
-  - go get github.com/onsi/ginkgo
-  - go get github.com/onsi/gomega
-  - cd $GOPATH/src/$PROJECT_PATH && go get ./...
+  - go get -u github.com/onsi/ginkgo/ginkgo
+  - go get -u github.com/onsi/gomega/...
+  - go get -u github.com/go-bindata/go-bindata/...
+  - go get ./...
 
 script:
-  - cd $GOPATH/src/$PROJECT_PATH && go test -v ./...
+  - ginkgo -r
