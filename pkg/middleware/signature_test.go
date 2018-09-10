@@ -8,7 +8,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	. "github.com/cooperaj/starling-coinjar/middleware"
+	. "github.com/cooperaj/starling-coinjar/pkg/middleware"
 )
 
 var _ = Describe("Signature", func() {

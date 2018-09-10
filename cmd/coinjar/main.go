@@ -1,4 +1,4 @@
-//go:generate go-bindata -pkg coinjar -o ../resources.go ../docs/
+//go:generate go-bindata -pkg coinjar -o ../../internal/app/coinjar/resources.go ../../assets/
 
 package main
 
@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/cooperaj/starling-coinjar"
-	"github.com/cooperaj/starling-coinjar/middleware"
+	"github.com/cooperaj/starling-coinjar/internal/app/coinjar"
+	"github.com/cooperaj/starling-coinjar/pkg/middleware"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/kelseyhightower/envconfig"

@@ -6,7 +6,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	. "github.com/cooperaj/starling-coinjar"
+	. "github.com/cooperaj/starling-coinjar/internal/app/coinjar"
 )
 
 var _ = Describe("Change", func() {

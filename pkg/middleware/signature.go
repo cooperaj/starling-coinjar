@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/cooperaj/starling-coinjar/util"
+	"github.com/cooperaj/starling-coinjar/pkg/response"
 )
 
 // SignatureValidationMiddleware Provides the webhook authentication that Starling uses
@@ -20,7 +20,7 @@ func (s *SignatureValidationMiddleware) Middleware(next http.Handler) http.Handl
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		hash := r.Header.Get("X-Hook-Signature")
 		if hash == "" {
-			response := util.ErrorResponse{
+			response := response.ErrorResponse{
 				Code:    http.StatusUnauthorized,
 				Message: "No signature specified",
 			}
@@ -41,7 +41,7 @@ func (s *SignatureValidationMiddleware) Middleware(next http.Handler) http.Handl
 		encodedString := base64.StdEncoding.EncodeToString(shaHash.Sum(nil))
 
 		if hash != encodedString {
-			response := util.ErrorResponse{
+			response := response.ErrorResponse{
 				Code:    http.StatusUnauthorized,
 				Message: "Invalid signature specified",
 			}

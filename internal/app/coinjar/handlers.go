@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/cooperaj/starling-coinjar/util"
+	"github.com/cooperaj/starling-coinjar/pkg/response"
 )
 
 type transactionResponse struct {
@@ -28,7 +28,7 @@ func TransactionHandler(tp TransactionProcessor) http.Handler {
 			fmt.Println(err.Error())
 		}
 
-		response := util.JsonResponse{
+		response := response.JsonResponse{
 			Body: transactionResponse{
 				Ok: false,
 			},
@@ -39,7 +39,7 @@ func TransactionHandler(tp TransactionProcessor) http.Handler {
 
 func HealthCheckHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		response := util.JsonResponse{
+		response := response.JsonResponse{
 			Body: healthCheckResponse{
 				Alive: true,
 			},

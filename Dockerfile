@@ -1,11 +1,11 @@
 # Stage1
-FROM golang:alpine AS build
+FROM golang:1.11-alpine AS build
 
 RUN apk --no-cache add git
 WORKDIR /go/src/github.com/cooperaj/starling-coinjar
 ADD . .
 RUN go get ./... && \
-    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o coinjar
+    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o coinjar cmd/coinjar/main.go
 
 
 # Stage2
