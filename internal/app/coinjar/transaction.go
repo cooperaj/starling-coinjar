@@ -34,7 +34,7 @@ func (tp *StarlingTransactionProcessor) Start() {
 			select {
 			case transaction := <-tp.WorkQueue:
 				// Receive a transaction to do work on
-				fmt.Printf("Recieved transaction of %f", transaction.Amount)
+				fmt.Printf("Recieved transaction of %f\n", transaction.Amount)
 				tp.CoinJar.AddFunds(CalculateChange(transaction, ChangeToAPound))
 
 			case <-tp.StopChan:
