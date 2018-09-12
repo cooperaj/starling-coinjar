@@ -27,7 +27,7 @@ func newRouter(cfg *coinjar.Config) (router *mux.Router) {
 	}
 
 	router.Handle("/health",
-		handlers.LoggingHandler(os.Stdout, coinjar.HealthCheckHandler())).
+		coinjar.HealthCheckHandler()).
 		Methods("GET")
 
 	router.Handle("/transaction",
