@@ -4,10 +4,12 @@ package main
 
 import (
 	"log"
-	"net/http"
+	net "net/http"
 	"os"
 
 	"github.com/cooperaj/starling-coinjar/internal/app/coinjar"
+	"github.com/cooperaj/starling-coinjar/internal/app/coinjar/starling"
+	"github.com/cooperaj/starling-coinjar/internal/pkg/http"
 	"github.com/cooperaj/starling-coinjar/pkg/middleware"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -27,14 +29,14 @@ func newRouter(cfg *coinjar.Config) (router *mux.Router) {
 	}
 
 	router.Handle("/health",
-		coinjar.HealthCheckHandler()).
+		http.HealthCheckHandler()).
 		Methods("GET")
 
 	router.Handle("/transaction",
 		handlers.LoggingHandler(
 			os.Stdout,
 			svm.Middleware(
-				coinjar.TransactionHandler(
+				http.TransactionHandler(
 					transactionProcessor)))).
 		Methods("POST")
 
@@ -47,13 +49,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	coinJar = coinjar.NewCoinJar("Coin Jar", cfg)
+	coinJar = starling.NewCoinJar("Coin Jar", cfg)
 
-	transactionProcessor = &coinjar.StarlingTransactionProcessor{CoinJar: coinJar}
+	transactionProcessor = starling.NewTransactionProcessor(coinJar)
 	transactionProcessor.Start()
 
 	router := newRouter(&cfg)
-	if err := http.ListenAndServe(":5000", router); err != nil {
+	if err := net.ListenAndServe(":5000", router); err != nil {
 		log.Fatal(err)
 	}
 }
