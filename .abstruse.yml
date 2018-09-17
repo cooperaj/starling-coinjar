@@ -1,7 +1,7 @@
 image: gvm_builder
 matrix:
   - env: GO_VERSION=1.10
-  - env: GO_VERSION=1.11
+  - env: GO_VERSION=1.11 GO111MODULE=on
 
 cache:
   - /home/abstruse/.gvm/versions
