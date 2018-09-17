@@ -1,7 +1,7 @@
 image: gvm_builder
 matrix:
   - env: GO_VERSION=1.10
-  - env: GO_VERSION=1.11
+  - env: GO_VERSION=1.11 GO111MODULE=on
 
 cache:
   - /home/abstruse/.gvm/versions
@@ -10,10 +10,10 @@ before_install:
   - gvm install $GO_VERSION
 
 install:
-  - go get -u github.com/onsi/ginkgo/ginkgo
-  - go get -u github.com/onsi/gomega/...
-  - go get -u github.com/go-bindata/go-bindata/...
+  #- [[ -z $GO111MODULE ]] go get github.com/onsi/ginkgo/ginkgo
+  #- [[ -z $GO111MODULE ]] go get github.com/onsi/gomega/...
   - go get ./...
 
 script:
-  - ginkgo -r
+  - [[ -z $GO111MODULE ]] ginkgo -r
+  - [[ -n $GO111MODULE ]] go test ./...
