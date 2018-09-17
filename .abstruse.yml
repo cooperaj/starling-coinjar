@@ -10,8 +10,8 @@ before_install:
   - gvm install $GO_VERSION
 
 install:
-  - [[ -z $GO111MODULE ]] go get github.com/onsi/ginkgo/ginkgo
-  - [[ -z $GO111MODULE ]] go get github.com/onsi/gomega/...
+  #- [[ -z $GO111MODULE ]] go get github.com/onsi/ginkgo/ginkgo
+  #- [[ -z $GO111MODULE ]] go get github.com/onsi/gomega/...
   - go get ./...
 
 script:
