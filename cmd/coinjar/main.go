@@ -1,4 +1,4 @@
-//go:generate go-bindata -pkg coinjar -o ../../internal/app/coinjar/resources.go ../../assets/
+//go:generate go-bindata -pkg coinjar -prefix "../../" -o ../../internal/app/coinjar/resources.go ../../assets/
 
 package main
 
