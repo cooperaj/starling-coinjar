@@ -21,3 +21,7 @@ script:
   - if [[ $ABSTRUSE_TAG != "null" ]]; then docker tag cooperaj/starling-coinjar:latest cooperaj/starling-coinjar:${ABSTRUSE_TAG}; fi
   - if [[ $ABSTRUSE_TAG != "null" ]]; then docker build -f Dockerfile.armhf -t cooperaj/armhf-starling-coinjar:latest .; fi
   - if [[ $ABSTRUSE_TAG != "null" ]]; then docker tag cooperaj/armhf-starling-coinjar:latest cooperaj/armhf-starling-coinjar:${ABSTRUSE_TAG}; fi
+
+deploy:
+  - if [[ $ABSTRUSE_TAG != "null" ]]; then docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD; fi
+  - if [[ $ABSTRUSE_TAG != "null" ]]; then docker push cooperaj/armhf-starling-coinjar:latest; fi
