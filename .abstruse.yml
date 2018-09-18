@@ -16,3 +16,7 @@ install:
 
 script:
   - go test -v ./...
+  - if [[ -n $ABSTRUSE_TAG ]]; then docker build -f Dockerfile -t cooperaj/starling-coinjar:latest .; fi
+  - if [[ -n $ABSTRUSE_TAG ]]; then docker tag cooperaj/starling-coinjar:latest cooperaj/starling-coinjar:${ABSTRUSE_TAG}; fi
+  - if [[ -n $ABSTRUSE_TAG ]]; then docker build -f Dockerfile.armhf -t cooperaj/armhf-starling-coinjar:latest .; fi
+  - if [[ -n $ABSTRUSE_TAG ]]; then docker tag cooperaj/armhf-starling-coinjar:latest cooperaj/armhf-starling-coinjar:${ABSTRUSE_TAG}; fi

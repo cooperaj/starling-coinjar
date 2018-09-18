@@ -4,15 +4,14 @@ FROM golang:1.11-alpine AS build
 RUN apk --no-cache add git build-base
 WORKDIR /go/src/github.com/cooperaj/starling-coinjar
 ADD . .
-ENV GO111MODULE=on GOOS=linux
+ENV GO111MODULE=on GOOS=linux GOARCH=arm 
 RUN go get ./... && \
     CGO_ENABLED=0 go build -a -installsuffix cgo -o coinjar cmd/coinjar/main.go
 
 
 # Stage2
-FROM alpine
+FROM resin/armhf-alpine
 
-RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 COPY --from=build /go/src/github.com/cooperaj/starling-coinjar/coinjar .
 
