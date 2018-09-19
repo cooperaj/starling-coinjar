@@ -78,7 +78,7 @@ func (cj *StarlingCoinJar) ensureStarlingSavingsGoal(name string) (savingsGoalUI
 }
 
 func (cj *StarlingCoinJar) makeSavingsGoal(uuid uuid.UUID, name string) error {
-	image, _ := coinjar.Asset("../../assets/coins.jpg")
+	image, _ := coinjar.Asset("assets/coins.jpg")
 	request := starling.SavingsGoalRequest{
 		Name:               name,
 		Currency:           cj.Currency,

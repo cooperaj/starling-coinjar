@@ -1,19 +1,27 @@
 image: gvm_builder
 matrix:
   - env: GO_VERSION=1.10
-  - env: GO_VERSION=1.11
+  - env: GO_VERSION=1.11 GO111MODULE=on BUILD_ME=1
 
 cache:
   - /home/abstruse/.gvm/versions
 
 before_install:
+  - env
   - gvm install $GO_VERSION
 
 install:
-  - go get -u github.com/onsi/ginkgo/ginkgo
-  - go get -u github.com/onsi/gomega/...
-  - go get -u github.com/go-bindata/go-bindata/...
+  - if [[ -z $GO111MODULE ]]; then go get github.com/onsi/ginkgo/ginkgo; fi
+  - if [[ -z $GO111MODULE ]]; then go get github.com/onsi/gomega/...; fi
   - go get ./...
 
 script:
-  - ginkgo -r
+  - go test -v ./...
+  - if [[ $SHOULD_BUILD ]]; then docker build -f Dockerfile -t cooperaj/starling-coinjar:latest .; fi
+  - if [[ $SHOULD_BUILD ]] && [[ $ABSTRUSE_TAG != "null" ]]; then docker tag cooperaj/starling-coinjar:latest cooperaj/starling-coinjar:${ABSTRUSE_TAG}; fi
+  - if [[ $SHOULD_BUILD ]]; then docker build -f Dockerfile.armhf -t cooperaj/armhf-starling-coinjar:latest .; fi
+  - if [[ $SHOULD_BUILD ]] && [[ $ABSTRUSE_TAG != "null" ]]; then docker tag cooperaj/armhf-starling-coinjar:latest cooperaj/armhf-starling-coinjar:${ABSTRUSE_TAG}; fi
+
+deploy:
+  - if [[ $SHOULD_BUILD ]]; then docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD; fi
+  - if [[ $SHOULD_BUILD ]]; then docker push cooperaj/armhf-starling-coinjar:latest; fi
