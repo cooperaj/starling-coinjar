@@ -23,5 +23,6 @@ script:
   - if [[ $SHOULD_BUILD ]] && [[ $ABSTRUSE_TAG != "null" ]]; then docker tag cooperaj/armhf-starling-coinjar:latest cooperaj/armhf-starling-coinjar:${ABSTRUSE_TAG}; fi
 
 deploy:
+  - env
   - if [[ $SHOULD_BUILD ]]; then docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD; fi
   - if [[ $SHOULD_BUILD ]]; then docker push cooperaj/armhf-starling-coinjar:latest; fi
