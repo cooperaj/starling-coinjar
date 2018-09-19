@@ -23,5 +23,7 @@ script:
 
 deploy:
   - if [[ $SHOULD_DEPLOY ]]; then docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD; fi
+  - if [[ $SHOULD_DEPLOY ]]; then docker push cooperaj/starling-coinjar:latest; fi
+  - if [[ $SHOULD_DEPLOY ]] && [[ $ABSTRUSE_TAG != "null" ]]; then docker push cooperaj/starling-coinjar:${ABSTRUSE_TAG}; fi
   - if [[ $SHOULD_DEPLOY ]]; then docker push cooperaj/armhf-starling-coinjar:latest; fi
   - if [[ $SHOULD_DEPLOY ]] && [[ $ABSTRUSE_TAG != "null" ]]; then docker push cooperaj/armhf-starling-coinjar:${ABSTRUSE_TAG}; fi
