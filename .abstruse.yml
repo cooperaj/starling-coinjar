@@ -1,7 +1,7 @@
 image: gvm_builder
 matrix:
   - env: GO_VERSION=1.10
-  - env: GO_VERSION=1.11 GO111MODULE=on
+  - env: GO_VERSION=1.11 GO111MODULE=on BUILD_ME=1
 
 cache:
   - /home/abstruse/.gvm/versions
@@ -17,11 +17,11 @@ install:
 
 script:
   - go test -v ./...
-  - if [[ $ABSTRUSE_TAG != "null" ]]; then docker build -f Dockerfile -t cooperaj/starling-coinjar:latest .; fi
-  - if [[ $ABSTRUSE_TAG != "null" ]]; then docker tag cooperaj/starling-coinjar:latest cooperaj/starling-coinjar:${ABSTRUSE_TAG}; fi
-  - if [[ $ABSTRUSE_TAG != "null" ]]; then docker build -f Dockerfile.armhf -t cooperaj/armhf-starling-coinjar:latest .; fi
-  - if [[ $ABSTRUSE_TAG != "null" ]]; then docker tag cooperaj/armhf-starling-coinjar:latest cooperaj/armhf-starling-coinjar:${ABSTRUSE_TAG}; fi
+  - if [[ $SHOULD_BUILD ]]; then docker build -f Dockerfile -t cooperaj/starling-coinjar:latest .; fi
+  - if [[ $SHOULD_BUILD ]] && [[ $ABSTRUSE_TAG != "null" ]]; then docker tag cooperaj/starling-coinjar:latest cooperaj/starling-coinjar:${ABSTRUSE_TAG}; fi
+  - if [[ $SHOULD_BUILD ]]; then docker build -f Dockerfile.armhf -t cooperaj/armhf-starling-coinjar:latest .; fi
+  - if [[ $SHOULD_BUILD ]] && [[ $ABSTRUSE_TAG != "null" ]]; then docker tag cooperaj/armhf-starling-coinjar:latest cooperaj/armhf-starling-coinjar:${ABSTRUSE_TAG}; fi
 
 deploy:
-  - if [[ $ABSTRUSE_TAG != "null" ]]; then docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD; fi
-  - if [[ $ABSTRUSE_TAG != "null" ]]; then docker push cooperaj/armhf-starling-coinjar:latest; fi
+  - if [[ $SHOULD_BUILD ]]; then docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD; fi
+  - if [[ $SHOULD_BUILD ]]; then docker push cooperaj/armhf-starling-coinjar:latest; fi
