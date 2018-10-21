@@ -20,16 +20,18 @@ var (
 type StarlingCoinJar struct {
 	Name           string
 	Currency       string
+	RoundTo        int8
 	SavingsGoalUID string
 }
 
-func NewCoinJar(name string, config coinjar.Config) coinjar.CoinJar {
-	var coinJar = StarlingCoinJar{Name: name}
+func NewCoinJar(config coinjar.Config) coinjar.CoinJar {
+	var coinJar = StarlingCoinJar{Name: config.CoinJarName}
 	coinJar.Currency = "GBP"
+	coinJar.RoundTo = int8(config.RoundTo)
 
 	client = coinJar.starlingClient(config.PersonalToken)
 
-	savingsGoalUID, err := coinJar.ensureStarlingSavingsGoal(name)
+	savingsGoalUID, err := coinJar.ensureStarlingSavingsGoal(config.CoinJarName)
 	if err != nil {
 		panic(fmt.Sprintf("Unable to ensure a Starling Savings Goal exists: %s", err.Error()))
 	}
@@ -56,6 +58,10 @@ func (cj *StarlingCoinJar) AddFunds(amount int8) error {
 	return nil
 }
 
+func (cj *StarlingCoinJar) GetRoundTo() int8 {
+	return cj.RoundTo
+}
+
 func (cj *StarlingCoinJar) ensureStarlingSavingsGoal(name string) (savingsGoalUID string, err error) {
 	// get list of savings goals
 	savingsGoals, _, err := client.SavingsGoals(ctx)
@@ -74,9 +80,10 @@ func (cj *StarlingCoinJar) ensureStarlingSavingsGoal(name string) (savingsGoalUI
 	uuid := uuid.New()
 	err = cj.makeSavingsGoal(uuid, name)
 	if err != nil {
-		fmt.Printf("New savings goal %s created...\n", name)
 		return "", err
 	}
+
+	fmt.Printf("New savings goal %s created...\n", name)
 
 	return uuid.String(), nil
 }
