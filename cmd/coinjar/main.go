@@ -49,7 +49,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	coinJar = starling.NewCoinJar("Coin Jar", cfg)
+	coinJar = starling.NewCoinJar(cfg)
 
 	transactionProcessor = starling.NewTransactionProcessor(coinJar)
 	transactionProcessor.Start()
