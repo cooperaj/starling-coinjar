@@ -39,6 +39,10 @@ func NewCoinJar(name string, config coinjar.Config) coinjar.CoinJar {
 }
 
 func (cj *StarlingCoinJar) AddFunds(amount int8) error {
+	if amount == 0 {
+		return nil
+	}
+
 	var change = starling.Amount{
 		Currency:   cj.Currency,
 		MinorUnits: int64(amount),
