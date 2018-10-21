@@ -3,10 +3,9 @@ package coinjar_test
 import (
 	"fmt"
 
+	. "github.com/cooperaj/starling-coinjar/internal/app/coinjar"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-
-	. "github.com/cooperaj/starling-coinjar/internal/app/coinjar"
 )
 
 var _ = Describe("Change", func() {
@@ -36,6 +35,11 @@ var _ = Describe("Change", func() {
 			{-0.85, ChangeToTwentyPence, 15},
 			{-0.85, ChangeToTenPence, 5},
 			{-0.85, ChangeToFivePence, 0},
+			{-0.80, ChangeToAPound, 20},
+			{-0.80, ChangeToFiftyPence, 20},
+			{-0.80, ChangeToTwentyPence, 0},
+			{-0.80, ChangeToTenPence, 0},
+			{-0.80, ChangeToFivePence, 0},
 			{-0.02, ChangeToAPound, 98},
 			{-0.02, ChangeToFiftyPence, 48},
 			{-0.02, ChangeToTwentyPence, 18},
