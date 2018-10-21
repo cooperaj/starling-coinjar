@@ -31,7 +31,11 @@ func (tp *StarlingTransactionProcessor) Start() {
 			case transaction := <-tp.WorkQueue:
 				// Receive a transaction to do work on
 				fmt.Printf("Recieved transaction of %f\n", transaction.Amount)
-				tp.CoinJar.AddFunds(coinjar.CalculateChange(transaction, tp.CoinJar.GetRoundTo()))
+
+				// Coin jar only wants to deal with card and wallet transactions
+				if transaction.Type == "TRANSACTION_CARD" || transaction.Type == "TRANSACTION_MOBILE_WALLET" {
+					tp.CoinJar.AddFunds(coinjar.CalculateChange(transaction, tp.CoinJar.GetRoundTo()))
+				}
 
 			case <-tp.StopChan:
 				// We have been asked to stop.
